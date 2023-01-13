@@ -25,7 +25,7 @@ func New(logger app.Logger, decoder server.Decoder, appConfig config.HTTPServer,
 		PathPrefixSubrouter("/api/v1")
 
 	mux.AddHandlers(
-		handler.NewMatchOverviewHandler(decoder, controller),
+		handler.NewLaneAdviceHandler(decoder, controller),
 		handler.NewIdentityHandler(decoder, controller),
 	)
 

@@ -12,7 +12,7 @@ import (
 
 type Controller interface {
 	GetIdentity(ctx context.Context, summonerName string) (lol.Summoner, error)
-	GetCurrentMatchOverview(ctx context.Context, puuid string) (string, error)
+	GetLaneAdvice(ctx context.Context, puuid string) (string, error)
 }
 
 type GenericController struct {
@@ -31,7 +31,7 @@ func (c *GenericController) GetIdentity(ctx context.Context, summonerName string
 	return c.leagueClient.LeagueOfLegends.GetSummonerByName(ctx, summonerName)
 }
 
-func (c *GenericController) GetCurrentMatchOverview(ctx context.Context, puuid string) (string, error) {
+func (c *GenericController) GetLaneAdvice(ctx context.Context, puuid string) (string, error) {
 	matches, err := c.leagueClient.LeagueOfLegends.GetMatchesByPuuid(ctx, puuid)
 	if err != nil {
 		return "", err
@@ -67,7 +67,5 @@ func (c *GenericController) GetCurrentMatchOverview(ctx context.Context, puuid s
 }
 
 func createPrompt(lane string, championSelf string, championOpponent string) string {
-	prompt := fmt.Sprintf("How do I win against %s as %s in %s?", championOpponent, championSelf, lane)
-	// fmt.Println("Prompt:", prompt)
-	return prompt
+	return fmt.Sprintf("How do I win against %s as %s in %s?", championOpponent, championSelf, lane)
 }

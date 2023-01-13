@@ -16,14 +16,12 @@ import (
 )
 
 var (
-	tickInterval        = 20 * time.Second
-	summonerName string = "byyjoww"
+	tickInterval = 20 * time.Second
 )
 
 func startClient(logrusLogger logrus.FieldLogger, cfg config.Config) {
 	var (
 		summoner lol.Summoner
-		// overview string
 	)
 
 	restClient := client.New(http.DefaultClient, decoder.New()).
@@ -32,7 +30,7 @@ func startClient(logrusLogger logrus.FieldLogger, cfg config.Config) {
 
 	statusCode, err := restClient.Get("/identity").
 		WithContext(context.Background()).
-		WithJsonBody(handler.IdentityRequest{SummonerName: summonerName}).
+		WithJsonBody(handler.IdentityRequest{SummonerName: cfg.RiotGames.SummonerName}).
 		DoAndUnmarshal(&summoner)
 
 	if err != nil {
@@ -58,29 +56,29 @@ func startClient(logrusLogger logrus.FieldLogger, cfg config.Config) {
 		case <-done:
 			return
 		case <-ticker.C:
-			checkLaneOverview(logger, restClient, summoner)
+			getLaneAdvice(logger, restClient, summoner)
 		}
 	}
 }
 
-func checkLaneOverview(logrusLogger logrus.FieldLogger, restClient *client.ClientImpl, summoner lol.Summoner) {
-	logrusLogger.Debugf("retrieving match overview")
+func getLaneAdvice(logrusLogger logrus.FieldLogger, restClient *client.ClientImpl, summoner lol.Summoner) {
+	logrusLogger.Debugf("retrieving lane advice")
 
 	var prompt string
 
-	statusCode, err := restClient.Get("/match/overview").
+	statusCode, err := restClient.Get("/advice/lane").
 		WithContext(context.Background()).
-		WithJsonBody(handler.MatchOverviewRequest{SummonerPuuid: summoner.Puuid}).
+		WithJsonBody(handler.LaneAdviceRequest{SummonerPuuid: summoner.Puuid}).
 		DoAndUnmarshal(&prompt)
 
 	if err != nil {
-		logrusLogger.WithError(err).Fatal("failed to get match overview")
+		logrusLogger.WithError(err).Fatal("failed to get lane advice")
 		return
 	}
 
 	if statusCode >= 300 {
 		err = fmt.Errorf("request failed with status code: %d", statusCode)
-		logrusLogger.WithError(err).Fatal("failed to get match overview")
+		logrusLogger.WithError(err).Fatal("failed to get lane advice")
 		return
 	}
 

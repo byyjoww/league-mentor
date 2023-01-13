@@ -10,36 +10,36 @@ import (
 	"github.com/byyjoww/league-mentor/services/http/server/response"
 )
 
-type MatchOverviewHandler struct {
+type LaneAdviceHandler struct {
 	decoder    server.Decoder
 	controller bll.Controller
 }
 
-type MatchOverviewRequest struct {
+type LaneAdviceRequest struct {
 	SummonerPuuid string `json:"summoner_puuid"`
 }
 
-func NewMatchOverviewHandler(decoder server.Decoder, controller bll.Controller) *MatchOverviewHandler {
-	return &MatchOverviewHandler{
+func NewLaneAdviceHandler(decoder server.Decoder, controller bll.Controller) *LaneAdviceHandler {
+	return &LaneAdviceHandler{
 		decoder:    decoder,
 		controller: controller,
 	}
 }
 
-func (h *MatchOverviewHandler) GetMethod() string {
+func (h *LaneAdviceHandler) GetMethod() string {
 	return http.MethodGet
 }
 
-func (h *MatchOverviewHandler) GetPath() string {
-	return "/match/overview"
+func (h *LaneAdviceHandler) GetPath() string {
+	return "/advice/lane"
 }
 
-func (h *MatchOverviewHandler) Handle(logger app.Logger, r *http.Request) server.Response {
+func (h *LaneAdviceHandler) Handle(logger app.Logger, r *http.Request) server.Response {
 	var (
 		ctx = r.Context()
 	)
 
-	req := MatchOverviewRequest{}
+	req := LaneAdviceRequest{}
 	if err := h.decoder.DecodeRequest(r, &req); err != nil {
 		logger.WithError(err).Error("error decoding request")
 		return response.NewJsonBadRequest(err)
@@ -49,12 +49,12 @@ func (h *MatchOverviewHandler) Handle(logger app.Logger, r *http.Request) server
 		"summoner_puuid": req.SummonerPuuid,
 	})
 
-	overview, err := h.controller.GetCurrentMatchOverview(ctx, req.SummonerPuuid)
+	advice, err := h.controller.GetLaneAdvice(ctx, req.SummonerPuuid)
 	if err != nil {
-		logger.WithError(err).Error("failed to get match overview")
+		logger.WithError(err).Error("failed to get lane advice")
 		return response.NewJsonInternalServerError(err)
 	}
 
-	logger.WithField("overview", overview).Info("successfully got match overview")
-	return response.NewJsonStatusOK(overview)
+	logger.WithField("advice", advice).Info("successfully got lane advice")
+	return response.NewJsonStatusOK(advice)
 }

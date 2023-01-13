@@ -33,5 +33,6 @@ type ChatGPT struct {
 }
 
 type RiotGames struct {
-	ApiKey string `mapstructure:"apiKey"`
+	ApiKey       string `mapstructure:"apiKey"`
+	SummonerName string `mapstructure:"summonerName"`
 }
