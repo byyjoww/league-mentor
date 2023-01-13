@@ -1,10 +1,11 @@
 package config
 
 type Config struct {
-	Environment string  `mapstructure:"environment"`
-	Logging     Logging `mapstructure:"logging"`
-	Http        HTTP    `mapstructure:"http"`
-	ChatGPT     ChatGPT `mapstructure:"chatGpt"`
+	Environment string    `mapstructure:"environment"`
+	Logging     Logging   `mapstructure:"logging"`
+	Http        HTTP      `mapstructure:"http"`
+	ChatGPT     ChatGPT   `mapstructure:"chatGpt"`
+	RiotGames   RiotGames `mapstructure:"riotGames"`
 }
 
 type Logging struct {
@@ -28,5 +29,9 @@ type Auth struct {
 }
 
 type ChatGPT struct {
+	ApiKey string `mapstructure:"apiKey"`
+}
+
+type RiotGames struct {
 	ApiKey string `mapstructure:"apiKey"`
 }

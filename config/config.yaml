@@ -3,5 +3,22 @@ environment: staging
 logging:
   level: debug
 
+http:
+  api:
+    address: 0.0.0.0:8080
+    auth:
+      enabled: false
+      user: user
+      pass: pass
+  telemetry:
+    address: 0.0.0.0:9080
+    auth:
+      enabled: false
+      user: 
+      pass: 
+
 chatGpt:
+  apiKey: 
+
+riotGames:
   apiKey: 

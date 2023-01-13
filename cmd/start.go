@@ -29,8 +29,8 @@ var (
 			switch startFlags.serverType {
 			case serverTypeApi:
 				startApi(logrusLogger, cfg)
-			case serverTypeTerminal:
-				startTerminal(logrusLogger, cfg)
+			case serverTypeClient:
+				startClient(logrusLogger, cfg)
 			}
 		},
 	}
@@ -39,8 +39,8 @@ var (
 		serverType string
 	}{}
 
-	serverTypeApi      string = "api"
-	serverTypeTerminal string = "terminal"
+	serverTypeApi    string = "api"
+	serverTypeClient string = "client"
 )
 
 func init() {
@@ -55,12 +55,17 @@ func loadDevEnvs() error {
 	}
 
 	var obj struct {
-		ApiKey string
+		ChatGptApiKey   string `json:"chatGptApiKey"`
+		RiotGamesApiKey string `json:"riotGamesApiKey"`
 	}
 
 	if err := json.Unmarshal(bytes, &obj); err != nil {
 		return err
 	}
 
-	return os.Setenv("APP_CHATGPT_APIKEY", obj.ApiKey)
+	if err := os.Setenv("APP_CHATGPT_APIKEY", obj.ChatGptApiKey); err != nil {
+		return err
+	}
+
+	return os.Setenv("APP_RIOTGAMES_APIKEY", obj.RiotGamesApiKey)
 }

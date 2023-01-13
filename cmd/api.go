@@ -1,24 +1,24 @@
 package cmd
 
 import (
-	"context"
-	"fmt"
-
+	"github.com/byyjoww/league-mentor/bll"
 	"github.com/byyjoww/league-mentor/config"
-	"github.com/byyjoww/league-mentor/services/chatgpt"
+	"github.com/byyjoww/league-mentor/logging"
+	apiApp "github.com/byyjoww/league-mentor/servers/api/http"
+	"github.com/byyjoww/league-mentor/services/http/decoder"
+	"github.com/byyjoww/league-mentor/services/http/server"
 	"github.com/sirupsen/logrus"
 )
 
 func startApi(logrusLogger logrus.FieldLogger, cfg config.Config) {
-	ctx := context.Background()
-	prompt := "How do I beat malphite in lane?"
+	appLogger := logging.NewAppLogger(logrusLogger)
+	decoder := decoder.New()
 
-	gptClient := chatgpt.NewGoGptClient(cfg.ChatGPT)
-	completion, err := gptClient.CreateCompletion(ctx, prompt)
-	if err != nil {
-		logrusLogger.WithError(err).Error("failed to create completion")
-		return
+	controller := bll.NewGenericController(cfg)
+	api := apiApp.New(appLogger, decoder, cfg.Http.Api, controller)
+
+	logrus.Info("App initialized succesfully")
+	if err := server.ListenAndServe(api); err != nil {
+		logrus.WithError(err).Fatal("failed to start server")
 	}
-
-	fmt.Println(completion.Value)
 }

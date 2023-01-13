@@ -28,16 +28,16 @@ dev-run-api:
 	@make setup-dev-env
 	./league-mentor start --type=api
 
-.PHONY: run-terminal
-run-terminal:
+.PHONY: run-client
+run-client:
 	build
-	league-mentor start --type=terminal
+	league-mentor start --type=client
 
-.PHONY: dev-run-terminal
-dev-run-terminal:
+.PHONY: dev-run-client
+dev-run-client:
 	@make build
 	@make setup-dev-env
-	./league-mentor start --type=terminal
+	./league-mentor start --type=client
 
 .PHONY: setup-dev-env
 setup-dev-env:
