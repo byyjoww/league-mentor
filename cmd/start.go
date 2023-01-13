@@ -15,8 +15,11 @@ var (
 		Use:   "start",
 		Short: "Starts a new server",
 		Run: func(cmd *cobra.Command, _ []string) {
-			if err := loadDevEnvs(); err != nil {
-				panic(fmt.Errorf("failed to load dev environment variables: %w", err))
+			switch startFlags.serverType {
+			case serverTypeDevApi:
+				loadDevEnvs()
+			case serverTypeDevClient:
+				loadDevEnvs()
 			}
 
 			var (
@@ -31,6 +34,10 @@ var (
 				startApi(logrusLogger, cfg)
 			case serverTypeClient:
 				startClient(logrusLogger, cfg)
+			case serverTypeDevApi:
+				startApi(logrusLogger, cfg)
+			case serverTypeDevClient:
+				startClient(logrusLogger, cfg)
 			}
 		},
 	}
@@ -41,6 +48,9 @@ var (
 
 	serverTypeApi    string = "api"
 	serverTypeClient string = "client"
+
+	serverTypeDevApi    string = "dev-api"
+	serverTypeDevClient string = "dev-client"
 )
 
 func init() {
@@ -48,10 +58,11 @@ func init() {
 	startCmd.Flags().StringVar(&startFlags.serverType, "type", serverTypeApi, "The server type to initialize")
 }
 
-func loadDevEnvs() error {
+func loadDevEnvs() {
 	bytes, err := os.ReadFile("./config/dev-env.json")
 	if err != nil {
-		return err
+		err = fmt.Errorf("failed to load dev environment variables: %w", err)
+		panic(err)
 	}
 
 	var obj struct {
@@ -60,12 +71,17 @@ func loadDevEnvs() error {
 	}
 
 	if err := json.Unmarshal(bytes, &obj); err != nil {
-		return err
+		err = fmt.Errorf("failed to load dev environment variables: %w", err)
+		panic(err)
 	}
 
 	if err := os.Setenv("APP_CHATGPT_APIKEY", obj.ChatGptApiKey); err != nil {
-		return err
+		err = fmt.Errorf("failed to load dev environment variables: %w", err)
+		panic(err)
 	}
 
-	return os.Setenv("APP_RIOTGAMES_APIKEY", obj.RiotGamesApiKey)
+	if err := os.Setenv("APP_RIOTGAMES_APIKEY", obj.RiotGamesApiKey); err != nil {
+		err = fmt.Errorf("failed to load dev environment variables: %w", err)
+		panic(err)
+	}
 }

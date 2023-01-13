@@ -19,29 +19,23 @@ build:
 
 .PHONY: run-api
 run-api:
-	build
+	@make build
 	league-mentor start --type=api
 
 .PHONY: dev-run-api
 dev-run-api:
 	@make build
-	@make setup-dev-env
-	./league-mentor start --type=api
+	./league-mentor start --type=dev-api
 
 .PHONY: run-client
 run-client:
-	build
+	@make build
 	league-mentor start --type=client
 
 .PHONY: dev-run-client
 dev-run-client:
 	@make build
-	@make setup-dev-env
-	./league-mentor start --type=client
-
-.PHONY: setup-dev-env
-setup-dev-env:
-	echo "setting up dev environment - TODO: add local env variables"
+	./league-mentor start --type=dev-client
 
 ################################################################################
 ## Tests
