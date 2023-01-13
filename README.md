@@ -15,14 +15,13 @@ League Mentor will provide you advice on how to play your League of Legends matc
 - Run the terminal command `make run-client`
 
 ## Testing
-If you want to build a server or client locally with specific environment variables for the api keys, you can create a file called `dev-env.json` in the `config` directory with the following json object:
+If you want to build a server or client locally and not be worried about committing your api keys, you can create a file called `dev-env.json` in the `config` directory with the following json object:
 ```go
 {
     "chatGptApiKey": "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",
     "riotGamesApiKey": "RGAPI-aa9ae8f8-8cbd-42ac-ba50-ad0368eb3a97"
 }
 ```
-
 You can then use the `make dev-run-api` or `make dev-run-client` commands to start a server/client while overriding the api key variables in `config.yaml` with the variables set in `dev-env.json`.
 
 
